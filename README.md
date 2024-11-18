@@ -34,6 +34,7 @@ Python
 <br><br>
 ## 참고자료
 1.https://www.youtube.com/watch?v=0_HU6u9Gack&list=PL-SQoGIX41rWUbKiVhuzIGo8-HznOyH75
+1-1.https://learn.unity.com/project/keurieiteo-kiteu-rpg
 <br>
 2.https://opengameart.org/
 <br>
