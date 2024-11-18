@@ -41,6 +41,9 @@ Python
 3.https://www.youtube.com/watch?v=bl0OYtqaIWY&list=PLy1Xj-4F5G_cytIH8by-bZ9TVj5qKMlZn&index=9
 <br>
 4.https://assetstore.unity.com/account/assets
+<br>
+##영현
+5.https://learn.unity.com/tutorial/moheomhal-weoldeu-saengseong?uv=2020.3&projectId=636dac67edbc2a166a15bc50#636dab27edbc2a17d2a2ab63
 
 ##ISSUE
 
