@@ -5,6 +5,9 @@
 ##  장르
 RPG
 <br><br>
+##  화면 크기
+16:10 Aspect
+<br><br>
 ##  개발 기간 
 2024.11.11 ~ 2024.12.13 <br>
 1주차 - 프로젝트 기획 <br>
@@ -33,9 +36,9 @@ Python
 1.https://www.youtube.com/watch?v=0_HU6u9Gack&list=PL-SQoGIX41rWUbKiVhuzIGo8-HznOyH75
 <br>
 2.https://opengameart.org/
-<br><br>
+<br>
 3.https://www.youtube.com/watch?v=bl0OYtqaIWY&list=PLy1Xj-4F5G_cytIH8by-bZ9TVj5qKMlZn&index=9
-<br><br>
+<br>
 
 ##ISSUE
 
