@@ -1,0 +1,55 @@
+using System.Collections;
+using UnityEngine;
+
+public class MonsterSpawner : MonoBehaviour
+{
+    // 소환할 몬스터의 프리팹
+    public GameObject monsterPrefab;
+
+    // 소환 위치
+    public Transform[] spawnPoints;
+
+    // 소환 간격 (초)
+    public float spawnInterval = 5.0f;
+
+    // 소환 여부
+    private bool isSpawning = true;
+
+    void Start()
+    {
+        // 코루틴 시작
+        StartCoroutine(SpawnMonsters());
+    }
+
+    IEnumerator SpawnMonsters()
+    {
+        while (isSpawning)
+        {
+            // 랜덤한 소환 위치 선택
+            int randomIndex = Random.Range(0, spawnPoints.Length);
+            Transform spawnPoint = spawnPoints[randomIndex];
+
+            // 몬스터 생성
+            Instantiate(monsterPrefab, spawnPoint.position, spawnPoint.rotation);
+
+            // 다음 소환까지 대기
+            yield return new WaitForSeconds(spawnInterval);
+        }
+    }
+
+    // 소환 중지
+    public void StopSpawning()
+    {
+        isSpawning = false;
+    }
+
+    // 소환 시작
+    public void StartSpawning()
+    {
+        if (!isSpawning)
+        {
+            isSpawning = true;
+            StartCoroutine(SpawnMonsters());
+        }
+    }
+}
