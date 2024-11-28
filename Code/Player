@@ -1,0 +1,54 @@
+using UnityEngine;
+
+public class CharacterMovement : MonoBehaviour
+{
+    public float moveSpeed = 5f;
+    private Animator animator;
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        Vector2 moveDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        if (moveDirection != Vector2.zero)
+        {
+            // 상하좌우 방향 결정
+            if (Mathf.Abs(moveDirection.x) > Mathf.Abs(moveDirection.y))
+            {
+                // 좌우 이동
+                if (moveDirection.x > 0)
+                {
+                    animator.SetInteger("Direction", 1); // 오른쪽
+                }
+                else
+                {
+                    animator.SetInteger("Direction", 3); // 왼쪽
+                }
+            }
+            else
+            {
+                // 상하 이동
+                if (moveDirection.y > 0)
+                {
+                    animator.SetInteger("Direction", 0); // 위쪽
+                }
+                else
+                {
+                    animator.SetInteger("Direction", 2); // 아래쪽
+                }
+            }
+
+            // 캐릭터 이동
+            transform.Translate(moveDirection.normalized * moveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // 멈췄을 때 기본 상태로 리셋 (필요한 경우만)
+            animator.SetInteger("Direction", -1);
+        }
+    }
+}
