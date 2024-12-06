@@ -1,0 +1,83 @@
+using UnityEngine;
+
+public class MonsterHealth : MonoBehaviour
+{
+    public float moveSpeed = 3f;            // 몬스터 이동 속도
+    public Transform[] waypoints;           // 몬스터가 이동할 경로 포인트
+    public int maxHealth = 10;             // 최대 체력
+    private int currentHealth;              // 현재 체력
+
+    private int currentWaypointIndex = 0;   // 현재 목표 경로 포인트 인덱스
+    private Rigidbody rb;                   // 몬스터의 Rigidbody
+    private Renderer monsterRenderer;       // 몬스터의 Renderer (시각 효과 적용)
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        monsterRenderer = GetComponent<Renderer>();
+        currentHealth = maxHealth;          // 체력을 최대 체력으로 초기화
+    }
+
+    void Update()
+    {
+        Patrol(); // 경로 따라 이동
+    }
+
+    // 몬스터가 경로를 따라 순찰하는 함수
+    void Patrol()
+    {
+        if (waypoints.Length == 0) return;
+
+        Transform targetWaypoint = waypoints[currentWaypointIndex];
+        Vector3 direction = (targetWaypoint.position - transform.position).normalized;
+        rb.MovePosition(transform.position + direction * moveSpeed * Time.deltaTime);
+
+        // 목표 지점에 도달하면 다음 포인트로 이동
+        if (Vector3.Distance(transform.position, targetWaypoint.position) < 0.1f)
+        {
+            currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
+        }
+    }
+
+    // 데미지를 받는 함수
+    public void TakeDamage(int damageAmount)
+    {
+        currentHealth -= damageAmount;
+        Debug.Log($"몬스터가 {damageAmount}만큼의 데미지를 입었습니다. 현재 체력: {currentHealth}");
+
+        if (currentHealth <= 0)
+        {
+            Die(); // 체력이 0 이하가 되면 사망 처리
+        }
+    }
+
+    // 몬스터 사망 처리
+    void Die()
+    {
+        Debug.Log("몬스터 사망!");
+        Destroy(gameObject); // 몬스터 오브젝트 삭제
+    }
+
+    // 플레이어와 충돌 시 발생하는 처리
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("플레이어와 충돌!");
+
+            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(1); // 플레이어에게 데미지 주기 (예: 10)
+            }
+        }
+    }
+
+    // 몬스터가 투명해지는 시각 효과 (필요 시 사용)
+    public void BecomeTransparent()
+    {
+        Color color = monsterRenderer.material.color;
+        color.a = Mathf.Lerp(color.a, 0.5f, 0.5f); // 50% 투명하게 변경
+        monsterRenderer.material.color = color;
+    }
+}
