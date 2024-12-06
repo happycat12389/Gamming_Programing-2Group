@@ -5,7 +5,7 @@ public class PlayerHealth : MonoBehaviour
 {
     public float invincibleTime = 3f;  // 무적 시간
     public float pushBackForce = 5f;   // 뒤로 밀리는 힘
-    public int maxHealth = 5;        // 최대 체력
+    public int maxHealth = 10;        // 최대 체력
     public int currentHealth;          // 현재 체력
 
     private int collisionCount = 0;    // 충돌 횟수
@@ -31,7 +31,7 @@ public class PlayerHealth : MonoBehaviour
                 // 처음 4번의 충돌은 밀리고 투명해짐
                 PushBackAndBecomeTransparent(collision);
             }
-            else if (collisionCount == 4)
+            else if (collisionCount == 10)
             {
                 // 5번째 충돌에서는 플레이어 삭제
                 Destroy(gameObject); // 플레이어 삭제
