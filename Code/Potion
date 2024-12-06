@@ -1,0 +1,49 @@
+using UnityEngine;
+using System.Collections;
+
+public class Potion : MonoBehaviour
+{
+    public int healAmount = 2;       // 포션으로 회복할 양
+    public float fadeDuration = 1f;  // 페이드 아웃 시간
+
+    private bool isConsumed = false; // 포션이 이미 사용되었는지 확인하는 플래그
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (isConsumed) return;  // 이미 사용된 포션이면 무시
+
+        if (other.CompareTag("Player"))
+        {
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.Heal(healAmount);
+                isConsumed = true;  // 포션 사용 상태로 변경
+                GetComponent<Collider2D>().enabled = false;  // 충돌 방지
+                StartCoroutine(FadeOutAndDestroy());         // 페이드 아웃 후 파괴
+            }
+        }
+    }
+
+    // 페이드 아웃 후 파괴되는 코루틴
+    private IEnumerator FadeOutAndDestroy()
+    {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (spriteRenderer != null)
+        {
+            float elapsedTime = 0f;
+            Color initialColor = spriteRenderer.color;
+
+            while (elapsedTime < fadeDuration)
+            {
+                float alpha = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
+                spriteRenderer.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        Destroy(gameObject);  // 최종적으로 오브젝트 파괴
+    }
+}
