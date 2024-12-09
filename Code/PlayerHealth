@@ -5,40 +5,44 @@ public class PlayerHealth : MonoBehaviour
 {
     public float invincibleTime = 3f;  // 무적 시간
     public float pushBackForce = 5f;   // 뒤로 밀리는 힘
-    public int maxHealth = 10;        // 최대 체력
+    public int maxHealth = 10;         // 최대 체력
     public int currentHealth;          // 현재 체력
 
     private int collisionCount = 0;    // 충돌 횟수
     private bool isInvincible = false; // 무적 상태 체크
     private Renderer playerRenderer;   // 플레이어의 Renderer
     private Collider playerCollider;   // 플레이어의 Collider
+    private Color originalColor;       // 원래의 플레이어 색상
 
     void Start()
     {
         playerRenderer = GetComponent<Renderer>();
         playerCollider = GetComponent<Collider>();
         currentHealth = maxHealth;     // 시작 시 최대 체력으로 초기화
+
+        if (playerRenderer != null)
+        {
+            originalColor = playerRenderer.material.color; // 원래 색상 저장
+        }
     }
 
     // 충돌 시 호출되는 함수
     void OnCollisionEnter(Collision collision)
     {
-        // 충돌한 객체가 몬스터인 경우
         if (collision.gameObject.CompareTag("Monster"))
         {
-            if (collisionCount < 4)
-            {
-                // 처음 4번의 충돌은 밀리고 투명해짐
-                PushBackAndBecomeTransparent(collision);
-            }
-            else if (collisionCount == 10)
-            {
-                // 5번째 충돌에서는 플레이어 삭제
-                Destroy(gameObject); // 플레이어 삭제
-            }
+            // 충돌 시 투명화와 밀림 효과 적용
+            PushBackAndBecomeTransparent(collision);
 
             // 충돌 횟수 증가
             collisionCount++;
+
+            if (collisionCount >= 10)
+            {
+                Debug.Log("충돌 횟수 초과! 플레이어 삭제");
+                Destroy(gameObject); // 10회 충돌 시 플레이어 삭제
+                return;
+            }
 
             // 무적 상태가 아니면 무적 상태로 전환
             if (!isInvincible)
@@ -47,26 +51,21 @@ public class PlayerHealth : MonoBehaviour
             }
 
             // 몬스터와의 충돌에서 데미지를 받는 처리
-            TakeDamage(1); // 데미지 양은 예시로 10
+            TakeDamage(1); // 데미지 양은 예시로 1
         }
     }
 
     // 데미지를 받는 함수
     public void TakeDamage(int damageAmount)
     {
-        if (isInvincible) return; // 무적 상태에서는 데미지를 받지 않음
+        if (isInvincible) return;
 
         currentHealth -= damageAmount;
         Debug.Log($"플레이어가 {damageAmount}만큼의 데미지를 입어 현재 체력: {currentHealth}");
 
-        // 체력이 0 이하일 때 사망 처리
         if (currentHealth <= 0)
         {
-            Die(); // 체력이 0 이하일 때 사망 처리
-        }
-        else
-        {
-            StartCoroutine(BecomeInvincible()); // 데미지를 받으면 무적 상태로 전환
+            Die();
         }
     }
 
@@ -74,7 +73,7 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         Debug.Log("플레이어 사망!");
-        Destroy(gameObject); // 플레이어 오브젝트 삭제
+        Destroy(gameObject);
     }
 
     // 충돌 후 플레이어가 밀리고 투명해지는 처리
@@ -91,18 +90,29 @@ public class PlayerHealth : MonoBehaviour
         }
 
         // 투명도 변경
-        Color color = playerRenderer.material.color;
-        color.a = Mathf.Lerp(color.a, 0.5f, 0.5f); // 50% 투명도
-        playerRenderer.material.color = color;
+        if (playerRenderer != null)
+        {
+            Color color = playerRenderer.material.color;
+            color.a = 0.5f; // 50% 투명도
+            playerRenderer.material.color = color;
+        }
     }
 
     // 무적 상태 코루틴
     IEnumerator BecomeInvincible()
     {
         isInvincible = true;
-        playerCollider.enabled = false;  // 충돌 감지 비활성화
+        playerCollider.enabled = false;
+
         yield return new WaitForSeconds(invincibleTime); // 무적 시간 대기
-        playerCollider.enabled = true;   // 충돌 감지 재활성화
+
+        // 원래의 불투명 상태로 복원
+        if (playerRenderer != null)
+        {
+            playerRenderer.material.color = originalColor;
+        }
+
+        playerCollider.enabled = true;
         isInvincible = false;
     }
 
